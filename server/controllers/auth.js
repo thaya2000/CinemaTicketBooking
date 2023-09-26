@@ -61,3 +61,43 @@ export const register = async (req, res) => {
     console.log(err);
   }
 };
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email) {
+      return res.json({ error: "Email is required" });
+    }
+
+    if (!password || password.length < 6) {
+      return res.json({ error: "Password must be at least 6 characters long" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.json({ error: "User not found" });
+    }
+
+    const match = await comparePassword(password, user.password);
+    if (!match) {
+      return res.json({ error: "Wrong password" });
+    }
+
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.json({
+      user: {
+        name: user.name,
+        email: user.email,
+        phoneno: user.phoneno,
+        role: user.role,
+      },
+      token,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
