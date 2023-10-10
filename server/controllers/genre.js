@@ -1,4 +1,4 @@
-import Category from "../models/category.js";
+import Genre from "../models/genre.js";
 import slugify from "slugify";
 
 export const create = async (req, res) => {
@@ -7,13 +7,13 @@ export const create = async (req, res) => {
     if (!name.trim()) {
       return res.json({ error: "Name is required" });
     }
-    const existingCategory = await Category.findOne({ name });
-    if (existingCategory) {
+    const existingGenre = await Genre.findOne({ name });
+    if (existingGenre) {
       return res.json({ error: "Already exists" });
     }
 
-    const category = await new Category({ name, slug: slugify(name) }).save();
-    res.json(category);
+    const genre = await new Genre({ name, slug: slugify(name) }).save();
+    res.json(genre);
   } catch (err) {
     console.log(err);
     return res.status(400).json(err);
@@ -23,16 +23,16 @@ export const create = async (req, res) => {
 export const update = async (req, res) => {
   try {
     const { name } = req.body;
-    const { categoryId } = req.params;
-    const category = await Category.findByIdAndUpdate(
-      categoryId,
+    const { genreId } = req.params;
+    const genre = await Genre.findByIdAndUpdate(
+      genreId,
       {
         name,
         slug: slugify(name),
       },
       { new: true }
     );
-    res.json(category);
+    res.json(genre);
   } catch (err) {
     console.log(err);
     return res.status(400).json(err.message);
@@ -41,7 +41,7 @@ export const update = async (req, res) => {
 
 export const remove = async (req, res) => {
   try {
-    const removed = await Category.findByIdAndDelete(req.params.categoryId);
+    const removed = await Genre.findByIdAndDelete(req.params.genreId);
     res.json(removed);
   } catch (err) {
     console.log(err);
@@ -51,7 +51,7 @@ export const remove = async (req, res) => {
 
 export const list = async (req, res) => {
   try {
-    const all = await Category.find({});
+    const all = await Genre.find({});
     res.json(all);
   } catch (err) {
     console.log(err);
@@ -61,8 +61,8 @@ export const list = async (req, res) => {
 
 export const read = async (req, res) => {
   try {
-    const category = await Category.findOne({ slug: req.params.slug });
-    res.json(category);
+    const genre = await Genre.findOne({ slug: req.params.slug });
+    res.json(genre);
   } catch (err) {
     console.log(err);
     return res.status(400).json(err.message);

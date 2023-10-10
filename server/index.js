@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import authRoutes from "./routes/auth.js";
-import categoryRoutes from "./routes/category.js";
+import genreRoutes from "./routes/genre.js";
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ app.use(express.json());
 
 // router middlewares
 app.use("/api", authRoutes);
-app.use("/api", categoryRoutes);
+app.use("/api", genreRoutes);
 
 const port = process.env.PORT;
 
