@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import morgan from "morgan";
 import authRoutes from "./routes/auth.js";
 import genreRoutes from "./routes/genre.js";
+import movieRoutes from "./routes/movie.js";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 // router middlewares
 app.use("/api", authRoutes);
 app.use("/api", genreRoutes);
+app.use("/api", movieRoutes);
 
 const port = process.env.PORT;
 

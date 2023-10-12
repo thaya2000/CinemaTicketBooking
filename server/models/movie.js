@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const { ObjectId } = mongoose.Schema;
 
-const movieSchema = new Schema(
+const movieSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -20,7 +20,8 @@ const movieSchema = new Schema(
       maxlength: 2000,
     },
     genre: {
-      type: String,
+      type: ObjectId,
+      ref: "Genre",
       required: true,
     },
     duration: {
@@ -32,7 +33,7 @@ const movieSchema = new Schema(
       required: true,
     },
     actors: {
-      type: [String],
+      type: String,
     },
     releaseDate: {
       type: Date,
@@ -49,23 +50,6 @@ const movieSchema = new Schema(
       data: Buffer,
       contentType: String,
     },
-    screenings: [
-      {
-        cinemaHall: {
-          type: ObjectId,
-          ref: "CinemaHall",
-          required: true,
-        },
-        showtime: {
-          type: Date,
-          required: true,
-        },
-        availableSeats: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
   },
   { timestamps: true }
 );
