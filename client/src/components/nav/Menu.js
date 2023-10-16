@@ -1,6 +1,16 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../context/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function Menu() {
+  const [auth, setAuth] = useAuth();
+  const navigate = useNavigate();
+  const logout = () => {
+    setAuth({ ...auth, user: null, token: "" });
+    localStorage.removeItem("auth");
+    navigate("/login");
+  };
+
   return (
     <>
       {/* <ul className="nav d-flex justify-content-around shadow-sm mb-2">
@@ -53,6 +63,11 @@ export default function Menu() {
                 <NavLink className="nav-link" to="/register">
                   Register
                 </NavLink>
+              </li>
+              <li className="nav-item pointer">
+                <a onClick={logout} className="nav-link">
+                  Logout
+                </a>
               </li>
             </ul>
             <form class="d-flex" role="search">
