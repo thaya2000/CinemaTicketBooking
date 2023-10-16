@@ -54,21 +54,26 @@ export default function Menu() {
                   Home
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/login">
-                  Login
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/register">
-                  Register
-                </NavLink>
-              </li>
-              <li className="nav-item pointer">
-                <a onClick={logout} className="nav-link">
-                  Logout
-                </a>
-              </li>
+              {!auth?.user ? (
+                <>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/login">
+                      Login
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/register">
+                      Register
+                    </NavLink>
+                  </li>
+                </>
+              ) : (
+                <li className="nav-item pointer">
+                  <a onClick={logout} className="nav-link">
+                    Logout
+                  </a>
+                </li>
+              )}
             </ul>
             <form class="d-flex" role="search">
               <input
