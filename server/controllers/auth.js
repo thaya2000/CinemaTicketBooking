@@ -34,6 +34,11 @@ export const register = async (req, res) => {
       return res.json({ error: "Email is already exist" });
     }
 
+    const existingPhoneNo = await User.findOne({ phoneno });
+    if (existingPhoneNo) {
+      return res.json({ error: "Phone Number is already exist" });
+    }
+
     const hashedPassword = await hashPassword(password);
 
     const user = await new User({
