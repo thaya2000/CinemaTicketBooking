@@ -1,15 +1,29 @@
 import { useAuth } from "../../context/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Jumbotron from "../../components/cards/Jumbotron";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AdminMenu from "../../components/nav/AdminMenu";
 
-export default function AdminCategory() {
+export default function AdminGenre() {
   // context
   const [auth, setAuth] = useAuth();
   // state
   const [name, setName] = useState("");
+  const [genres, setGenres] = useState([]);
+
+  useEffect(() => {
+    loadGenres();
+  }, []);
+
+  const loadGenres = async () => {
+    try {
+      const { data } = await axios.get("/genres");
+      setGenres(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,6 +33,7 @@ export default function AdminCategory() {
         toast.error(data.error);
       } else {
         setName("");
+        loadGenres();
         toast.success(`"${data.name}" is created`);
       }
       console.log(name);
@@ -53,6 +68,15 @@ export default function AdminCategory() {
                 />
                 <button className="btn btn-primary mt-3">Submit</button>
               </form>
+            </div>
+            <hr />
+
+            <div className="col">
+              {genres?.map((g) => (
+                <button key={g._id} className="btn btn-outline-primary m-3">
+                  {g.name}
+                </button>
+              ))}
             </div>
           </div>
         </div>
