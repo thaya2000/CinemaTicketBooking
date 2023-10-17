@@ -11,3 +11,7 @@
 .pointer{
     cursor: pointer;
 }
+
+.large-text {
+  font-size: 72px;
+}
