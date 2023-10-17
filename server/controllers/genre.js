@@ -7,9 +7,9 @@ export const create = async (req, res) => {
     if (!name.trim()) {
       return res.json({ error: "Name is required" });
     }
-    const existingGenre = await Genre.findOne({ name });
+    const existingGenre = await Genre.findOne({ slug: slugify(name) });
     if (existingGenre) {
-      return res.json({ error: "Already exists" });
+      return res.json({ error: "Already exist" });
     }
 
     const genre = await new Genre({ name, slug: slugify(name) }).save();
