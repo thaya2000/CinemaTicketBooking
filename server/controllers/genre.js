@@ -24,6 +24,14 @@ export const update = async (req, res) => {
   try {
     const { name } = req.body;
     const { genreId } = req.params;
+
+    if (!name.trim()) {
+      return res.json({ error: "Name is required" });
+    }
+    const existingGenre = await Genre.findOne({ slug: slugify(name) });
+    if (existingGenre) {
+      return res.json({ error: "Already exist" });
+    }
     const genre = await Genre.findByIdAndUpdate(
       genreId,
       {

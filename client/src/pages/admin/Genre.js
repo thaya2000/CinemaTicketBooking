@@ -69,6 +69,25 @@ export default function AdminGenre() {
     }
   };
 
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.delete(`/genre/${selected._id}`);
+      if (data?.error) {
+        toast.error(data.error);
+      } else {
+        toast.success(`"${data.name}" is deleted`);
+        setSelected(null);
+        setUpdatingName("");
+        loadGenres();
+        setVisible(false);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Category may already exist. Try again.");
+    }
+  };
+
   return (
     <>
       <Jumbotron
@@ -116,6 +135,8 @@ export default function AdminGenre() {
                 value={updatingName}
                 setValue={setUpdatingName}
                 handleSubmit={handleUpdate}
+                buttonText="Update"
+                handleDelete={handleDelete}
               />
             </Modal>
           </div>
