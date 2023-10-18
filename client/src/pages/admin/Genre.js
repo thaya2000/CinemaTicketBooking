@@ -4,6 +4,8 @@ import Jumbotron from "../../components/cards/Jumbotron";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AdminMenu from "../../components/nav/AdminMenu";
+import GenreForm from "../../components/forms/GenreForm";
+import { Modal } from "antd";
 
 export default function AdminGenre() {
   // context
@@ -11,6 +13,9 @@ export default function AdminGenre() {
   // state
   const [name, setName] = useState("");
   const [genres, setGenres] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [selected, setSelected] = useState(null);
+  const [updatingName, setUpdatingName] = useState("");
 
   useEffect(() => {
     loadGenres();
@@ -43,6 +48,27 @@ export default function AdminGenre() {
     }
   };
 
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.put(`/genre/${selected._id}`, {
+        name: updatingName,
+      });
+      if (data?.error) {
+        toast.error(data.error);
+      } else {
+        toast.success(`"${data.name}" is updated`);
+        setSelected(null);
+        setUpdatingName("");
+        loadGenres();
+        setVisible(false);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Category may already exist. Try again.");
+    }
+  };
+
   return (
     <>
       <Jumbotron
@@ -57,27 +83,41 @@ export default function AdminGenre() {
           </div>
           <div className="col-md-9">
             <div className="p-3 mt-2 mb-2 h4 bg-light">Manage Genres</div>
-            <div className="p-3">
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  className="form-control p-3"
-                  placeholder="write genre name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <button className="btn btn-primary mt-3">Submit</button>
-              </form>
-            </div>
+
+            <GenreForm
+              value={name}
+              setValue={setName}
+              handleSubmit={handleSubmit}
+            />
             <hr />
 
             <div className="col">
               {genres?.map((g) => (
-                <button key={g._id} className="btn btn-outline-primary m-3">
+                <button
+                  key={g._id}
+                  className="btn btn-outline-primary m-3"
+                  onClick={() => {
+                    setVisible(true);
+                    setSelected(g);
+                    setUpdatingName(g.name);
+                  }}
+                >
                   {g.name}
                 </button>
               ))}
             </div>
+            <Modal
+              open={visible}
+              onOk={() => setVisible(false)}
+              onCancel={() => setVisible(false)}
+              footer={null}
+            >
+              <GenreForm
+                value={updatingName}
+                setValue={setUpdatingName}
+                handleSubmit={handleUpdate}
+              />
+            </Modal>
           </div>
         </div>
       </div>
