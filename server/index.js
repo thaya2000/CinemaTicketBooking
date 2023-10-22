@@ -5,6 +5,7 @@ import morgan from "morgan";
 import authRoutes from "./routes/auth.js";
 import genreRoutes from "./routes/genre.js";
 import movieRoutes from "./routes/movie.js";
+import actorRoutes from "./routes/actor.js";
 import cors from "cors";
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use("/api", authRoutes);
 app.use("/api", genreRoutes);
 app.use("/api", movieRoutes);
+app.use("/api", actorRoutes);
 
 const port = process.env.PORT;
 

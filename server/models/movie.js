@@ -24,17 +24,16 @@ const movieSchema = new mongoose.Schema(
       ref: "Genre",
       required: true,
     },
-    duration: {
-      type: Number,
-      required: true,
-    },
     director: {
       type: String,
       required: true,
     },
-    actors: {
-      type: String,
-    },
+    actors: [
+      {
+        type: ObjectId,
+        ref: "Actor",
+      },
+    ],
     releaseDate: {
       type: Date,
       required: true,
@@ -43,12 +42,13 @@ const movieSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    trailerUrl: {
-      type: String,
-    },
     poster: {
       data: Buffer,
       contentType: String,
+    },
+    status: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

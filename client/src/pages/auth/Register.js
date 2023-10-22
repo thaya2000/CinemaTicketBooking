@@ -10,7 +10,7 @@ export default function Register() {
   const [name, setName] = useState("Thaya");
   const [email, setEmail] = useState("thaya@gamil.com");
   const [phoneno, setPhoneno] = useState("0774533478");
-  const [password, setPassword] = useState("thaya123");
+  const [password, setPassword] = useState("tttttttt");
 
   // hook
   const [auth, setAuth] = useAuth();

@@ -29,8 +29,8 @@ export default function Login() {
         localStorage.setItem("auth", JSON.stringify(data));
         setAuth({ ...auth, token: data.token, user: data.user });
         navigate(
-          location.state ||
-            `/dashboard/${data?.user?.role === 1 ? "admin" : "user"}`
+          location.state || `/`
+          // `/dashboard/${data?.user?.role === 1 ? "admin" : "user"}`
         );
         toast.success("Login successful");
       }

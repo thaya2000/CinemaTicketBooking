@@ -8,6 +8,8 @@ import Dashboard from "./pages/user/Dashboard";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminGenre from "./pages/admin/Genre";
 import AdminMovie from "./pages/admin/Movie";
+import AdminMovies from "./pages/admin/Movies";
+import AdminMovieUpdate from "./pages/admin/MovieUpdate";
 import AdminRoute from "./components/routes/AdminRoute";
 import UserProfile from "./pages/user/Profile";
 import UserBookings from "./pages/user/Booking";
@@ -27,9 +29,11 @@ export default function App() {
       <Menu />
       <Toaster />
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/" element={<PrivateRoutes />}>
+          <Route path="" element={<Home />} />
+        </Route>
         <Route path="/dashboard" element={<PrivateRoutes />}>
           <Route path="user" element={<Dashboard />} />
           <Route path="user/profile" element={<UserProfile />} />
@@ -39,6 +43,11 @@ export default function App() {
           <Route path="admin" element={<AdminDashboard />} />
           <Route path="admin/genre" element={<AdminGenre />} />
           <Route path="admin/movie" element={<AdminMovie />} />
+          <Route path="admin/movies" element={<AdminMovies />} />
+          <Route
+            path="admin/movie/update/:slug"
+            element={<AdminMovieUpdate />}
+          />
         </Route>
         <Route path="*" element={<PageNotFound />} replace />
       </Routes>

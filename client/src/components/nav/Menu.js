@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { useNavigate } from "react-router-dom";
+import "./Menu.css";
 
 export default function Menu() {
   const [auth, setAuth] = useAuth();
@@ -13,27 +14,9 @@ export default function Menu() {
 
   return (
     <>
-      {/* <ul className="nav d-flex justify-content-around shadow-sm mb-2">
-        <li className="nav-item">
-          <NavLink className="nav-link" aria-current="page" to="/">
-            HOME
-          </NavLink>
-        </li>
-        <li className="nav-item">
-          <NavLink className="nav-link" to="/login">
-            LOGIN
-          </NavLink>
-        </li>
-        <li className="nav-item">
-          <NavLink className="nav-link" to="/register">
-            REGISTER
-          </NavLink>
-        </li>
-      </ul> */}
-
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/">
+      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+        {/* <div className="container-fluid">
+          <a className="navbar-brand" href="/">
             Movie Ticket Booking
           </a>
           <button
@@ -68,50 +51,125 @@ export default function Menu() {
                   </li>
                 </>
               ) : (
-                <div className="dropdown">
+                <>
                   <li>
-                    <a
-                      className="nav-link pointer dropdown-toggle"
-                      data-bs-toggle="dropdown"
-                    >
-                      {auth?.user?.name?.toUpperCase()}
-                    </a>
-
-                    <ul className="dropdown-menu pointer">
-                      <li className="drop-item">
-                        <NavLink
-                          className="nav-link"
-                          to={`/dashboard/${
-                            auth?.user?.role === 1 ? "admin" : "user"
-                          }`}
-                        >
-                          Dashboard
-                        </NavLink>
-                      </li>
-
-                      <li className="drop-item pointer">
-                        <a onClick={logout} className="nav-link">
-                          Logout
-                        </a>
-                      </li>
-                    </ul>
+                    <NavLink className="nav-link" to="/now-showing">
+                      Now Showing
+                    </NavLink>
                   </li>
-                </div>
+                  <li>
+                    <NavLink className="nav-link" to="/coming-soon">
+                      Coming Soon
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className="nav-link" to="/booking">
+                      Booking
+                    </NavLink>
+                  </li>
+                  <div className="dropdown">
+                    <li>
+                      <a
+                        className="nav-link pointer dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                      >
+                        {auth?.user?.name?.toUpperCase()}
+                      </a>
+
+                      <ul className="dropdown-menu pointer">
+                        <li className="drop-item">
+                          <NavLink
+                            className="nav-link"
+                            to={`/dashboard/${
+                              auth?.user?.role === 1 ? "admin" : "user"
+                            }`}
+                          >
+                            Dashboard
+                          </NavLink>
+                        </li>
+
+                        <li className="drop-item pointer">
+                          <a onClick={logout} className="nav-link">
+                            Logout
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+                  </div>
+                </>
               )}
             </ul>
-            <form class="d-flex" role="search">
-              <input
-                class="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button class="btn btn-outline-success" type="submit">
-                Search
-              </button>
-            </form>
           </div>
-        </div>
+        </div> */}
+
+        <ul className="navbar-nav me-auto mb-2 mb-lg-0 ms-auto">
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/">
+              Home
+            </NavLink>
+          </li>
+          {!auth?.user ? (
+            <>
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/login">
+                  Login
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/register">
+                  Register
+                </NavLink>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <NavLink className="nav-link" to="/now-showing">
+                  Now Showing
+                </NavLink>
+              </li>
+              <li>
+                <NavLink className="nav-link" to="/coming-soon">
+                  Coming Soon
+                </NavLink>
+              </li>
+              <li>
+                <NavLink className="nav-link" to="/booking">
+                  Booking
+                </NavLink>
+              </li>
+              <div className="dropdown">
+                <li>
+                  <a
+                    className="nav-link pointer dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                  >
+                    {auth?.user?.name?.toUpperCase()}
+                  </a>
+
+                  <ul className="dropdown-menu pointer">
+                    <li className="drop-item">
+                      <NavLink
+                        className="nav-link"
+                        to={`/dashboard/${
+                          auth?.user?.role === 1 ? "admin" : "user"
+                        }`}
+                      >
+                        Dashboard
+                      </NavLink>
+                    </li>
+
+                    <li className="drop-item pointer">
+                      <a onClick={logout} className="nav-link">
+                        Logout
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </div>
+            </>
+          )}
+        </ul>
       </nav>
     </>
   );

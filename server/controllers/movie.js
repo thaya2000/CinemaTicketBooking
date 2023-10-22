@@ -4,18 +4,15 @@ import slugify from "slugify";
 
 export const create = async (req, res) => {
   try {
-    // console.log(req.fields);
-    // console.log(req.files);
     const {
       title,
       description,
       genre,
-      duration,
       director,
       actors,
       releaseDate,
       language,
-      trailerUrl,
+      status,
     } = req.fields;
     const { poster } = req.files;
 
@@ -29,8 +26,6 @@ export const create = async (req, res) => {
         return res.json({ error: "Description is required" });
       case !genre.trim():
         return res.json({ error: "Genre is required" });
-      case !duration.trim():
-        return res.json({ error: "Duration is required" });
       case !director.trim():
         return res.json({ error: "Director is required" });
       case !actors.trim():
@@ -39,8 +34,8 @@ export const create = async (req, res) => {
         return res.json({ error: "ReleaseDate is required" });
       case !language.trim():
         return res.json({ error: "Language is required" });
-      case !trailerUrl.trim():
-        return res.json({ error: "TrailerUrl is required" });
+      case !status.trim():
+        return res.json({ error: "Status is required" });
       case poster && poster.size > 1000000:
         return res.json({ error: "Image should be less than 1mb in size" });
     }
@@ -49,6 +44,7 @@ export const create = async (req, res) => {
     const movie = new Movie({
       ...req.fields,
       slug: slugify(title),
+      actors: JSON.parse(req.fields.actors).map((actor) => actor),
     });
 
     if (poster) {
@@ -119,12 +115,11 @@ export const update = async (req, res) => {
       title,
       description,
       genre,
-      duration,
       director,
       actors,
       releaseDate,
       language,
-      trailerUrl,
+      status,
     } = req.fields;
     const { poster } = req.files;
 
@@ -136,8 +131,6 @@ export const update = async (req, res) => {
         return res.json({ error: "Description is required" });
       case !genre.trim():
         return res.json({ error: "Genre is required" });
-      case !duration.trim():
-        return res.json({ error: "Duration is required" });
       case !director.trim():
         return res.json({ error: "Director is required" });
       case !actors.trim():
@@ -146,8 +139,8 @@ export const update = async (req, res) => {
         return res.json({ error: "ReleaseDate is required" });
       case !language.trim():
         return res.json({ error: "Language is required" });
-      case !trailerUrl.trim():
-        return res.json({ error: "TrailerUrl is required" });
+      case !status.trim():
+        return res.json({ error: "Status is required" });
       case poster && poster.size > 1000000:
         return res.json({ error: "Image should be less than 1mb in size" });
     }
@@ -158,6 +151,7 @@ export const update = async (req, res) => {
       {
         ...req.fields,
         slug: slugify(title),
+        actors: JSON.parse(req.fields.actors).map((actor) => actor),
       },
       { new: true }
     );
