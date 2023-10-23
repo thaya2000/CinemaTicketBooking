@@ -4,6 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/auth";
 import { useNavigate, useLocation } from "react-router-dom";
+import "./auth.css";
 
 export default function Register() {
   // state

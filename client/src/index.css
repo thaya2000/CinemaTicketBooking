@@ -3,6 +3,10 @@
     text-decoration-thickness: 5px;
 } */
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .active {
     font-weight: bold;
     text-decoration-thickness: 5px;
@@ -14,4 +18,39 @@
 
 .large-text {
   font-size: 72px;
+}
+
+.button{
+ 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  border:none;
+  border-radius: 0.5rem;
+  background: linear-gradient(106.23deg, #f2eff3, #bc02f4 100%);
+  transition:all 100ms ease-out;
+}
+
+.button:hover{
+  cursor: pointer;
+  color: #b607ec; 
+  background: white;
+  border: 2px solid #e30af2;
+}
+
+.App{
+  overflow: hidden;
+  color: var(--black);
+  background: #f3f3f3;
+  padding: 1rem 1rem;
+}
+
+.blur{
+  position: absolute;
+  width: 40rem;
+  height: 14rem;
+  border-radius: 50%;
+  background: #9d6fba;
+  filter: blur(100px);
 }

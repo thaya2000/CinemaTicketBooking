@@ -5,6 +5,7 @@ import moment from "moment";
 import { Modal } from "antd";
 import axios from "axios";
 import MovieDetailCard from "./MovieDetailCard";
+import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
 
 export default function MovieCard({ m }) {
   const navigate = useNavigate();
@@ -12,31 +13,6 @@ export default function MovieCard({ m }) {
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState(null);
   const [auth, setAuth] = useAuth();
-
-  // const handleMoreDetailsClick = () => {
-  //   // You can define the route or action when the button is clicked here
-  //   navigate(`/movie/${m._id}`);
-  // };
-
-  // async function getActorName(id) {
-  //   try {
-  //     const response = await axios.get(`/actor/${id}`);
-  //     return response.data.name;
-  //   } catch (error) {
-  //     console.error(error);
-  //     return "N/A"; // Return a default value or handle errors as needed
-  //   }
-  // }
-
-  // async function main() {
-  //   const actorId = "65327d95a8c17bf4643ecb57";
-  //   const actorName = await getActorName(actorId);
-  //   console.log("Actor Name:", actorName);
-  // }
-
-  // main().catch((error) => {
-  //   console.error(error);
-  // });
 
   const cardStyle = {
     position: "relative",
@@ -50,6 +26,7 @@ export default function MovieCard({ m }) {
   };
 
   return (
+    /*
     <div className="card" style={cardStyle}>
       <img
         className="card-img-top"
@@ -79,20 +56,24 @@ export default function MovieCard({ m }) {
           footer={null}
         >
           <MovieDetailCard m={m} />
-          {/* <div className="p-3">
-            <h2>{selected?.title}</h2>
-            <p> Synopsi : {selected?.description}</p>
-            <p>
-              Release Date:{" "}
-              {moment(selected?.releaseDate).format("MMM Do YYYY")}
-            </p>
-            <p>Language: {selected?.language}</p>
-            <p>Actors: {selected?.actors?.map((a) => a).join(", ")}</p>
-            <p>Genres: {selected?.genre.name}</p>
-            <p>Status: {selected?.status}</p>
-          </div> */}
         </Modal>
       </div>
     </div>
+    */
+    <Card className="py-4">
+      <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+        <p className="text-tiny uppercase font-bold">Daily Mix</p>
+        <small className="text-default-500">12 Tracks</small>
+        <h4 className="font-bold text-large">Frontend Radio</h4>
+      </CardHeader>
+      <CardBody className="overflow-visible py-2">
+        <Image
+          alt="Card background"
+          className="object-cover rounded-xl"
+          src={`${process.env.REACT_APP_API}/movie/poster/${m._id}`}
+          width={270}
+        />
+      </CardBody>
+    </Card>
   );
 }

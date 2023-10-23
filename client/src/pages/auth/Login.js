@@ -4,6 +4,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/auth";
 import { useNavigate, useLocation } from "react-router-dom";
+import "./auth.css";
+import logo from "./logo192.png";
 
 export default function Login() {
   // state
@@ -41,14 +43,37 @@ export default function Login() {
   };
   return (
     <div>
-      <Jumbotron title="Login" />
-      <div className="container mt-5">
-        <div className="row">
-          <div className="col-md-6 offset-md-3">
+      {/* <Jumbotron title="Login" /> */}
+      <div className="log-container">
+        <div className="row1">
+          <div
+            style={{
+              marginTop: "3rem",
+              marginLeft: "5rem",
+              width: "10rem",
+              height: "10rem",
+            }}
+            className="img"
+          >
+            <img src={logo} alt="" />
+          </div>
+
+          <div className="name">
+            <div className="h1">
+              <span>Regal&nbsp;Cinema</span>
+            </div>
+            <div>
+              <span>Enjoy your visual experience..!</span>
+            </div>
+          </div>
+          <div className="form">
             <form onSubmit={handleSubmit}>
+              <div className="tittle">
+                <b>Log In</b>
+              </div>
               <input
                 type="text"
-                className="form-control mb-4 p-2"
+                className="forminput"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -56,18 +81,24 @@ export default function Login() {
               />
               <input
                 type="text"
-                className="form-control mb-4 p-2"
+                className="forminput"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <button
-                className="btn btn-primary"
-                type="submit"
-                onClick={handleSubmit}
-              >
-                Submit
-              </button>
+              <div className="submit" style={{ cursor: "pointer" }}>
+                <span>
+                  Don't have an account.{" "}
+                  <b style={{ color: "#b607ec" }}>SignUp!</b>
+                </span>
+                <button
+                  type="submit"
+                  onClick={handleSubmit}
+                  className="button submitbut"
+                >
+                  Submit
+                </button>
+              </div>
             </form>
           </div>
         </div>
