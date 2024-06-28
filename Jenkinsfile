@@ -65,8 +65,8 @@ pipeline {
                     // Set up Docker environment to use Minikube's Docker daemon
                     sh 'eval $(minikube docker-env)'
                     // Build Docker images in Minikube's Docker environment
-                    sh 'docker build --cache-from ${SERVER_DOCKER_IMAGE}:latest -t ${SERVER_DOCKER_IMAGE}:${GIT_COMMIT} ./server'
-                    sh 'docker build --cache-from ${CLIENT_DOCKER_IMAGE}:latest -t ${CLIENT_DOCKER_IMAGE}:${GIT_COMMIT} ./client'
+                    sh 'docker build -t ${SERVER_DOCKER_IMAGE}:${GIT_COMMIT} ./server'
+                    sh 'docker build -t ${CLIENT_DOCKER_IMAGE}:${GIT_COMMIT} ./client'
                 }
             }
         }
@@ -93,6 +93,16 @@ pipeline {
                     // Get NodePort for the cinema-client service
                     def nodePort = sh(script: "kubectl get svc cinema-client -o=jsonpath='{.spec.ports[0].nodePort}' --kubeconfig=/var/lib/jenkins/.kube/config", returnStdout: true).trim()
                     
+                    // Wait for the service to be up and running
+                    timeout(time: 3, unit: 'MINUTES') {
+                        waitUntil {
+                            script {
+                                def status = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://${minikubeIp}:${nodePort}", returnStdout: true).trim()
+                                return status == '200'
+                            }
+                        }
+                    }
+                    
                     // Run post-deployment tests
                     sh "curl -f http://${minikubeIp}:${nodePort} || exit 1"
                 }
@@ -101,7 +111,7 @@ pipeline {
 
         stage('Rollback') {
             when {
-                expression { return currentBuild.result == 'FAILURE' }
+                expression { currentBuild.result == 'FAILURE' }
             }
             steps {
                 script {
