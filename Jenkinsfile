@@ -2,15 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CLIENT_TIMEOUT = '300'
-        COMPOSE_HTTP_TIMEOUT = '300'
         PORT_CLIENT = credentials('PORT_CLIENT_CI')
         REACT_APP_API = credentials('REACT_APP_API_CI')
         PORT_SERVER = credentials('PORT_SERVER_CI')
         MONGO_URI = credentials('MONGO_URI_CI')
         JWT_SECRET = credentials('JWT_SECRET_CI')
-        CLIENT_DOCKER_IMAGE = 'thayanan/cinema-client'
-        SERVER_DOCKER_IMAGE = 'thayanan/cinema-server'
+        CLIENT_DOCKER_IMAGE = 'cinema-client'
+        SERVER_DOCKER_IMAGE = 'cinema-server'
     }
 
     stages {
@@ -38,17 +36,9 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        // Log in to Docker Hub
-                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-
-                        // Build Docker images in Minikube's Docker environment
-                        sh 'docker build -t ${SERVER_DOCKER_IMAGE}:${GIT_COMMIT} ./server'
-                        sh 'docker build -t ${CLIENT_DOCKER_IMAGE}:${GIT_COMMIT} ./client'
-
-                        // Log out from Docker Hub
-                        sh 'docker logout'
-                    }
+                    // Build Docker images in Minikube's Docker environment
+                    sh 'eval $(minikube docker-env) && docker build -t ${SERVER_DOCKER_IMAGE}:${GIT_COMMIT} ./server'
+                    sh 'eval $(minikube docker-env) && docker build -t ${CLIENT_DOCKER_IMAGE}:${GIT_COMMIT} ./client'
                 }
             }
         }
