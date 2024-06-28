@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon index.js"
-  },
+      "start": "nodemon index.js",
+      "build": "echo 'No build necessary for server'"
+    },
   "keywords": [
     "movieticket",
     "booking"

@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // If you need to use a GitHub token, uncomment the following line
         // GITHUB_TOKEN = credentials('github-token')
         PORT_CLIENT = credentials('PORT_CLIENT_CI')
         REACT_APP_API = credentials('REACT_APP_API_CI')
@@ -27,7 +26,10 @@ pipeline {
             steps {
                 script {
                     // Build Node.js (Express) application
-                    sh 'cd server && npm install && npm run build'
+                    sh 'cd server && npm install'
+
+                    // Skip build step if not needed for server
+                    // sh 'cd server && npm run build'
 
                     // Build React application
                     sh 'cd client && npm install && npm run build'
