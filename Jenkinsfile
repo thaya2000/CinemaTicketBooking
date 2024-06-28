@@ -36,9 +36,13 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
+                    // Ensure minikube is running
+                    sh 'minikube start'
+                    // Set up Docker environment to use Minikube's Docker daemon
+                    sh 'eval $(minikube docker-env)'
                     // Build Docker images in Minikube's Docker environment
-                    sh 'eval $(minikube docker-env) && docker build -t ${SERVER_DOCKER_IMAGE}:${GIT_COMMIT} ./server'
-                    sh 'eval $(minikube docker-env) && docker build -t ${CLIENT_DOCKER_IMAGE}:${GIT_COMMIT} ./client'
+                    sh 'docker build -t ${SERVER_DOCKER_IMAGE}:${GIT_COMMIT} ./server'
+                    sh 'docker build -t ${CLIENT_DOCKER_IMAGE}:${GIT_COMMIT} ./client'
                 }
             }
         }
