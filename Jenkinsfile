@@ -2,6 +2,8 @@ pipeline {
     agent any
 
     environment {
+        DOCKER_CLIENT_TIMEOUT = '300'
+        COMPOSE_HTTP_TIMEOUT = '300'
         PORT_CLIENT = credentials('PORT_CLIENT_CI')
         REACT_APP_API = credentials('REACT_APP_API_CI')
         PORT_SERVER = credentials('PORT_SERVER_CI')
@@ -36,9 +38,17 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    // Build Docker images in Minikube's Docker environment
-                    sh 'docker build -t ${SERVER_DOCKER_IMAGE}:${GIT_COMMIT} ./server'
-                    sh 'docker build -t ${CLIENT_DOCKER_IMAGE}:${GIT_COMMIT} ./client'
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Log in to Docker Hub
+                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+
+                        // Build Docker images in Minikube's Docker environment
+                        sh 'docker build -t ${SERVER_DOCKER_IMAGE}:${GIT_COMMIT} ./server'
+                        sh 'docker build -t ${CLIENT_DOCKER_IMAGE}:${GIT_COMMIT} ./client'
+
+                        // Log out from Docker Hub
+                        sh 'docker logout'
+                    }
                 }
             }
         }
@@ -47,11 +57,11 @@ pipeline {
             steps {
                 script {
                     // Deploy MongoDB
-                    sh 'kubectl apply -f k8s/mongodb.yml --validate=false'
+                    sh 'kubectl apply -f k8s/mongodb.yml --validate=false --kubeconfig=/var/lib/jenkins/.kube/config'
 
                     // Deploy MERN stack applications
-                    sh 'kubectl apply -f k8s/deployment.yml --validate=false'
-                    sh 'kubectl apply -f k8s/service.yml --validate=false'
+                    sh 'kubectl apply -f k8s/deployment.yml --validate=false --kubeconfig=/var/lib/jenkins/.kube/config'
+                    sh 'kubectl apply -f k8s/service.yml --validate=false --kubeconfig=/var/lib/jenkins/.kube/config'
                 }
             }
         }
@@ -72,8 +82,8 @@ pipeline {
             steps {
                 script {
                     // Rollback to previous stable version
-                    sh 'kubectl rollout undo deployment/cinema-server'
-                    sh 'kubectl rollout undo deployment/cinema-client'
+                    sh 'kubectl rollout undo deployment/cinema-server --kubeconfig=/var/lib/jenkins/.kube/config'
+                    sh 'kubectl rollout undo deployment/cinema-client --kubeconfig=/var/lib/jenkins/.kube/config'
                 }
             }
         }
