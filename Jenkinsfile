@@ -87,8 +87,14 @@ pipeline {
         stage('Post-Deployment Tests') {
             steps {
                 script {
+                    // Get Minikube IP
+                    def minikubeIp = sh(script: 'minikube ip', returnStdout: true).trim()
+                    
+                    // Get NodePort for the cinema-client service
+                    def nodePort = sh(script: "kubectl get svc cinema-client -o=jsonpath='{.spec.ports[0].nodePort}' --kubeconfig=/var/lib/jenkins/.kube/config", returnStdout: true).trim()
+                    
                     // Run post-deployment tests
-                    sh 'curl -f http://$(minikube ip):NodePort || exit 1'
+                    sh "curl -f http://${minikubeIp}:${nodePort} || exit 1"
                 }
             }
         }
