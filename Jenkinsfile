@@ -9,19 +9,23 @@ pipeline {
         JWT_SECRET = credentials('JWT_SECRET_CI')
         CLIENT_DOCKER_IMAGE = 'cinema-client'
         SERVER_DOCKER_IMAGE = 'cinema-server'
+        PATH = "${env.PATH}:${env.WORKSPACE}/bin"
     }
 
     stages {
         stage('Install kubectl') {
             steps {
                 script {
+                    // Create a bin directory in the workspace
+                    sh 'mkdir -p ${WORKSPACE}/bin'
+                    
                     // Install kubectl if not already installed
                     sh '''
                     if ! command -v kubectl &> /dev/null; then
                         echo "kubectl could not be found. Installing kubectl..."
                         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
                         chmod +x kubectl
-                        sudo mv kubectl /usr/local/bin/
+                        mv kubectl ${WORKSPACE}/bin/
                     else
                         echo "kubectl is already installed."
                     fi
