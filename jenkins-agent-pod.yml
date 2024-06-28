@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jenkins-agent
+spec:
+  containers:
+  - name: jenkins-agent
+    image: jenkins/agent
+    volumeMounts:
+    - name: ca-cert
+      mountPath: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      subPath: ca.crt
+    - name: client-cert
+      mountPath: /var/run/secrets/kubernetes.io/serviceaccount/client.crt
+      subPath: client.crt
+    - name: client-key
+      mountPath: /var/run/secrets/kubernetes.io/serviceaccount/client.key
+      subPath: client.key
+  volumes:
+  - name: ca-cert
+    secret:
+      secretName: minikube-ca-cert
+  - name: client-cert
+    secret:
+      secretName: minikube-client-cert
+  - name: client-key
+    secret:
+      secretName: minikube-client-key

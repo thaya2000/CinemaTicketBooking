@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG = credentials('kubeconfig')  // Use the ID you specified for your kubeconfig
+        KUBECONFIG = '/var/lib/jenkins/kubeconfig' // Adjust path as needed
         PORT_CLIENT = credentials('PORT_CLIENT_CI')
         REACT_APP_API = credentials('REACT_APP_API_CI')
         PORT_SERVER = credentials('PORT_SERVER_CI')
