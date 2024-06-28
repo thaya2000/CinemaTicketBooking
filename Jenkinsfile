@@ -38,8 +38,8 @@ pipeline {
                 script {
                     // Ensure previous Minikube state is cleared
                     sh 'minikube delete || true'
-                    // Start Minikube with increased resources and a specific Kubernetes version
-                    sh 'minikube start --memory=4096 --cpus=2 --kubernetes-version=v1.20.0'
+                    // Start Minikube with adjusted resources and a specific Kubernetes version
+                    sh 'minikube start --memory=2200 --cpus=2 --kubernetes-version=v1.20.0'
                     // Set up Docker environment to use Minikube's Docker daemon
                     sh 'eval $(minikube docker-env)'
                     // Build Docker images in Minikube's Docker environment
