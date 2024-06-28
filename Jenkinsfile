@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_TOKEN = credentials('github-token')
+        // GITHUB_TOKEN = credentials('github-token')
         PORT_CLIENT = credentials('PORT_CLIENT_CI')
         REACT_APP_API = credentials('REACT_APP_API_CI')
         PORT_SERVER = credentials('PORT_SERVER_CI')
@@ -17,7 +17,8 @@ pipeline {
             steps {
                 script {
                     // Checkout code from GitHub using token
-                    git url: 'https://github.com/thaya2000/CinemaTicketBooking.git', credentialsId: 'github-token'
+                    git url: 'https://github.com/thaya2000/CinemaTicketBooking.git'
+                    // , credentialsId: 'github-token'
                 }
             }
         }
