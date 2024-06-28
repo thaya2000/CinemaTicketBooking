@@ -12,6 +12,24 @@ pipeline {
     }
 
     stages {
+        stage('Install kubectl') {
+            steps {
+                script {
+                    // Install kubectl if not already installed
+                    sh '''
+                    if ! command -v kubectl &> /dev/null; then
+                        echo "kubectl could not be found. Installing kubectl..."
+                        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                        chmod +x kubectl
+                        sudo mv kubectl /usr/local/bin/
+                    else
+                        echo "kubectl is already installed."
+                    fi
+                    '''
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 script {
@@ -43,8 +61,8 @@ pipeline {
                     // Set up Docker environment to use Minikube's Docker daemon
                     sh 'eval $(minikube docker-env)'
                     // Build Docker images in Minikube's Docker environment
-                    sh 'docker build -t ${SERVER_DOCKER_IMAGE}:${GIT_COMMIT} ./server'
-                    sh 'docker build -t ${CLIENT_DOCKER_IMAGE}:${GIT_COMMIT} ./client'
+                    sh 'docker build --cache-from ${SERVER_DOCKER_IMAGE}:latest -t ${SERVER_DOCKER_IMAGE}:${GIT_COMMIT} ./server'
+                    sh 'docker build --cache-from ${CLIENT_DOCKER_IMAGE}:latest -t ${CLIENT_DOCKER_IMAGE}:${GIT_COMMIT} ./client'
                 }
             }
         }
