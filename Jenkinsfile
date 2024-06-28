@@ -9,31 +9,14 @@ pipeline {
         JWT_SECRET = credentials('JWT_SECRET_CI')
         CLIENT_DOCKER_IMAGE = 'cinema-client'
         SERVER_DOCKER_IMAGE = 'cinema-server'
-        PATH = "${env.PATH}:${env.WORKSPACE}/bin"
+        KUBECONFIG = credentials('KUBECONFIG_CI')
+    }
+
+    tools {
+        kubectl 'kubectl'
     }
 
     stages {
-        stage('Install kubectl') {
-            steps {
-                script {
-                    // Create a bin directory in the workspace
-                    sh 'mkdir -p ${WORKSPACE}/bin'
-                    
-                    // Install kubectl if not already installed
-                    sh '''
-                    if ! command -v kubectl &> /dev/null; then
-                        echo "kubectl could not be found. Installing kubectl..."
-                        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-                        chmod +x kubectl
-                        mv kubectl ${WORKSPACE}/bin/
-                    else
-                        echo "kubectl is already installed."
-                    fi
-                    '''
-                }
-            }
-        }
-
         stage('Checkout') {
             steps {
                 script {
@@ -60,8 +43,8 @@ pipeline {
                 script {
                     // Ensure previous Minikube state is cleared
                     sh 'minikube delete || true'
-                    // Start Minikube with adjusted resources and a specific Kubernetes version
-                    sh 'minikube start --memory=2200 --cpus=2 --kubernetes-version=v1.20.0'
+                    // Start Minikube with adjusted resources
+                    sh 'minikube start --memory=2200 --cpus=2'
                     // Set up Docker environment to use Minikube's Docker daemon
                     sh 'eval $(minikube docker-env)'
                     // Build Docker images in Minikube's Docker environment
@@ -75,11 +58,11 @@ pipeline {
             steps {
                 script {
                     // Deploy MongoDB
-                    sh 'kubectl apply -f k8s/mongodb.yml --validate=false --kubeconfig=/var/lib/jenkins/.kube/config'
+                    sh 'kubectl apply -f k8s/mongodb.yml --validate=false --kubeconfig=${KUBECONFIG}'
 
                     // Deploy MERN stack applications
-                    sh 'kubectl apply -f k8s/deployment.yml --validate=false --kubeconfig=/var/lib/jenkins/.kube/config'
-                    sh 'kubectl apply -f k8s/service.yml --validate=false --kubeconfig=/var/lib/jenkins/.kube/config'
+                    sh 'kubectl apply -f k8s/deployment.yml --validate=false --kubeconfig=${KUBECONFIG}'
+                    sh 'kubectl apply -f k8s/service.yml --validate=false --kubeconfig=${KUBECONFIG}'
                 }
             }
         }
@@ -91,7 +74,7 @@ pipeline {
                     def minikubeIp = sh(script: 'minikube ip', returnStdout: true).trim()
                     
                     // Get NodePort for the cinema-client service
-                    def nodePort = sh(script: "kubectl get svc cinema-client -o=jsonpath='{.spec.ports[0].nodePort}' --kubeconfig=/var/lib/jenkins/.kube/config", returnStdout: true).trim()
+                    def nodePort = sh(script: "kubectl get svc cinema-client -o=jsonpath='{.spec.ports[0].nodePort}' --kubeconfig=${KUBECONFIG}", returnStdout: true).trim()
                     
                     // Wait for the service to be up and running
                     timeout(time: 3, unit: 'MINUTES') {
@@ -109,6 +92,15 @@ pipeline {
             }
         }
 
+        stage('Cleanup') {
+            steps {
+                script {
+                    // Clean up Minikube resources
+                    sh 'minikube delete'
+                }
+            }
+        }
+
         stage('Rollback') {
             when {
                 expression { currentBuild.result == 'FAILURE' }
@@ -116,9 +108,26 @@ pipeline {
             steps {
                 script {
                     // Rollback to previous stable version
-                    sh 'kubectl rollout undo deployment/cinema-server --kubeconfig=/var/lib/jenkins/.kube/config'
-                    sh 'kubectl rollout undo deployment/cinema-client --kubeconfig=/var/lib/jenkins/.kube/config'
+                    sh 'kubectl rollout undo deployment/cinema-server --kubeconfig=${KUBECONFIG}'
+                    sh 'kubectl rollout undo deployment/cinema-client --kubeconfig=${KUBECONFIG}'
                 }
+            }
+        }
+    }
+
+    post {
+        failure {
+            script {
+                // Notify about the failure (e.g., send an email or a message to a Slack channel)
+                echo "Build failed!"
+                // Add any other notification steps here
+            }
+        }
+
+        always {
+            script {
+                // Ensure Minikube is stopped to free up resources
+                sh 'minikube stop'
             }
         }
     }
