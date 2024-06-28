@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cinema-server
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cinema-server
+  template:
+    metadata:
+      labels:
+        app: cinema-server
+    spec:
+      containers:
+      - name: cinema-server
+        image: thayanan/cinema-server:${GIT_COMMIT}
+        ports:
+        - containerPort: 8002
+        env:
+        - name: PORT
+          valueFrom:
+            secretKeyRef:
+              name: cinema-secrets
+              key: PORT_SERVER
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: cinema-secrets
+              key: MONGO_URI
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: cinema-secrets
+              key: JWT_SECRET
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cinema-client
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cinema-client
+  template:
+    metadata:
+      labels:
+        app: cinema-client
+    spec:
+      containers:
+      - name: cinema-client
+        image: thayanan/cinema-client:${GIT_COMMIT}
+        ports:
+        - containerPort: 3002
+        env:
+        - name: REACT_APP_API
+          valueFrom:
+            secretKeyRef:
+              name: cinema-secrets
+              key: REACT_APP_API
