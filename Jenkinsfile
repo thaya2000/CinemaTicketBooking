@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // GITHUB_TOKEN = credentials('github-token')
         PORT_CLIENT = credentials('PORT_CLIENT_CI')
         REACT_APP_API = credentials('REACT_APP_API_CI')
         PORT_SERVER = credentials('PORT_SERVER_CI')
@@ -16,7 +15,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    // Checkout code from GitHub using token
+                    // Checkout code from GitHub
                     git url: 'https://github.com/thaya2000/CinemaTicketBooking.git', branch: 'main'
                 }
             }
@@ -28,24 +27,11 @@ pipeline {
                     // Build Node.js (Express) application
                     sh 'cd server && npm install'
 
-                    // Skip build step if not needed for server
-                    // sh 'cd server && npm run build'
-
-                    // Build React application
-                    sh 'cd client && npm install && npm run build'
+                    // Build React application with CI=false
+                    sh 'cd client && npm install && CI=false npm run build'
                 }
             }
         }
-
-        // stage('Test') {
-        //     steps {
-        //         script {
-        //             // Run Unit Tests
-        //             sh 'cd server && npm test'
-        //             sh 'cd client && npm test'
-        //         }
-        //     }
-        // }
 
         stage('Docker Build') {
             steps {
