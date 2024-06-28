@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        KUBECONFIG = credentials('kubeconfig') 
         PORT_CLIENT = credentials('PORT_CLIENT_CI')
         REACT_APP_API = credentials('REACT_APP_API_CI')
         PORT_SERVER = credentials('PORT_SERVER_CI')
@@ -47,11 +48,11 @@ pipeline {
             steps {
                 script {
                     // Deploy MongoDB
-                    sh 'kubectl apply -f k8s/mongodb.yml'
+                    sh 'kubectl apply -f k8s/mongodb.yml --validate=false'
 
                     // Deploy MERN stack applications
-                    sh 'kubectl apply -f k8s/deployment.yml'
-                    sh 'kubectl apply -f k8s/service.yml'
+                    sh 'kubectl apply -f k8s/deployment.yml --validate=false'
+                    sh 'kubectl apply -f k8s/service.yml --validate=false'
                 }
             }
         }
